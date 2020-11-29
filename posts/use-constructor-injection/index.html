@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <title>Prefer Constructor Injection | My New Hugo Site</title>
+
+  <meta charset="UTF-8">
+  <meta name="language" content="en">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  
+  
+
+  <link rel="shortcut icon" type="image/png" href="/favicon.ico" />
+
+
+  
+  
+    
+ 
+  
+  
+  
+  
+  
+  
+    
+    <link type="text/css" rel="stylesheet" href="/css/post.min.b60e0932fe1c50c3d7c5b4f83ee9e4592363654d0f2abf05bbd0678d5b8a214c.css" integrity="sha256-tg4JMv4cUMPXxbT4PunkWSNjZU0PKr8Fu9BnjVuKIUw="/>
+  
+    
+    <link type="text/css" rel="stylesheet" href="/css/custom.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css" integrity="sha256-47DEQpj8HBSa&#43;/TImW&#43;5JCeuQeRkm5NMpJWZG3hSuFU="/>
+  
+  
+   
+   
+    
+
+<script type="application/ld+json">
+  
+    { 
+      "@context": "http://schema.org", 
+      "@type": "WebSite", 
+      "url": "http:\/\/example.org\/posts\/use-constructor-injection\/",
+      "name": "Prefer Constructor Injection",
+      "author": {
+        "@type": "Person",
+        "name": ""
+      },
+      "description": ""
+    }
+  
+  </script>
+</head>
+
+<body>
+  <div class="burger__container">
+  <div class="burger" aria-controls="navigation" aria-label="Menu">
+    <div class="burger__meat burger__meat--1"></div>
+    <div class="burger__meat burger__meat--2"></div>
+    <div class="burger__meat burger__meat--3"></div>
+  </div>
+</div>
+ 
+
+  <nav class="nav" id="navigation">
+  <ul class="nav__list">
+    
+    
+  </ul>
+</nav>
+
+
+  <main>
+    
+    
+
+    <div class="flex-wrapper">
+      <div class="post__container">
+        <div class="post">
+          <header class="post__header">
+            <h1 id="post__title">Prefer Constructor Injection</h1>
+            <time datetime="2020-11-21 00:00:00 &#43;0000 UTC" class="post__date">Nov 21 2020</time> 
+          </header>
+          <article class="post__content">
+              
+<p>I observed that in Spring ecosystem field or setter injection are practices still in use. In this post I want to present approach which I argue is safer and should be the default choice for software developers.</p>
+<h2 id="mutability-mess--dangerous-mutability--mutability-unleashed--mutability-on-the-loose">Mutability Mess / Dangerous Mutability / Mutability unleashed / Mutability on (the?) loose<a class="anchor" href="#mutability-mess--dangerous-mutability--mutability-unleashed--mutability-on-the-loose">#</a></h2>
+<p>The first concern stems from the fact that both Field and Setter injections imply that a given class is mutable, the class' dependencies may change, which is rarely desirable and can be seen as a loophole for bugs, especially during parallel execution.</p>
+<p>Given singleton class <code>UserService</code> in a typical web application, which handles multiple HTTP requests at a time:</p>
+<pre><code class="language-java">public class UserService {
+    private UserStorage userStorage;
+
+    @Inject
+    public void setUserStorage(UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
+}
+</code></pre>
+<p>One of the test classes could look like this:</p>
+<pre><code class="language-java">@ContextConfiguration(/* [...] */)
+class UserServiceTest {
+    @Inject
+    private UserService userService;
+    
+    @Test
+    public void testCase() {
+        userService.setUserStorage(Mockito.mock(UserStorage.class));
+        // [...]
+    }
+}
+</code></pre>
+<p>A software developer decided to mock <code>UserStorage</code> behaviour to be able to test <code>UserService</code> thoroughly, the easiest way for him to do it was to just use available setter to mock dependency in question. The problem is, unless dependency in <code>testCase</code> is not reverted to the original value, then subsequent test cases are going to deal with different context than intended, which means test cases are dependent. Overall, tests become harder to maintain.</p>
+<p>====</p>
+<p>Example with using a setter to mock dependency in a test?
+Example with controller and user&rsquo;s context?
+Example showing that setter injection is dangerous.</p>
+<h2 id="magic-versus-idioms">Magic versus idioms<a class="anchor" href="#magic-versus-idioms">#</a></h2>
+<p>Example showing that field injection uses reflection,</p>
+<ul>
+<li>which can be harder to grasp for newcomers</li>
+<li>and is hacky, prevents from testing without framework.</li>
+</ul>
+<h2 id="initialization-reinvented">Initialization reinvented<a class="anchor" href="#initialization-reinvented">#</a></h2>
+<p>Example showing that field and setter approaches breaks standard order of initialization and thus requires framework-aware way of how things should be initalized @PostConstruct.</p>
+<h2 id="cycle-or-not-to-cycle">Cycle or not to cycle?<a class="anchor" href="#cycle-or-not-to-cycle">#</a></h2>
+<p>field and setter injection permits cycles in dependencies.</p>
+<h2 id="test">Test<a class="anchor" href="#test">#</a></h2>
+<pre><code>public class UserManager {
+    private final UserStorage userStorage;
+
+    @Inject
+    public UserManager(UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
+}
+</code></pre>
+<p>`
+public class UserManager {
+private final UserStorage userStorage;</p>
+<pre><code>@Inject
+public UserManager(UserStorage userStorage) {
+    this.userStorage = userStorage;
+}
+</code></pre>
+<p>}
+`</p>
+
+
+              
+          </article>
+          
+
+ <div class="pagination">
+  
+
+  
+    <a class="pagination__item" href="http://example.org/posts/inject-mocks-considered-harmful/">
+      <span class="pagination__label">Next Post</span>
+      <span class="pagination__title" >@InjectMocks Considered Harmful</span>
+    </a>
+  
+</div>
+
+          
+          <footer class="post__footer">
+            
+
+
+<div class="social-icons">
+  
+     
+    
+  
+     
+    
+  
+     
+    
+  
+     
+    
+  
+     
+    
+  
+     
+    
+  
+     
+    
+  
+     
+    
+     
+</div>
+
+            <p></p>
+          </footer>
+          </div>
+      </div>
+      
+    </div>
+    
+
+  </main>
+
+   
+
+  
+  <script src="/js/index.min.49e4d8a384357d9b445b87371863419937ede9fa77737522ffb633073aebfa44.js" integrity="sha256-SeTYo4Q1fZtEW4c3GGNBmTft6fp3c3Ui/7YzBzrr&#43;kQ=" crossorigin="anonymous"></script>
+  
+  
+  <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.min.js"></script>
+
+  
+  <script src="https://unpkg.com/prismjs@1.20.0/plugins/autoloader/prism-autoloader.min.js"
+    data-autoloader-path="https://unpkg.com/prismjs@1.20.0/components/"></script>
+
+  
+
+
+</body>
+
+</html>

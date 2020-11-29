@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <title>@InjectMocks Considered Harmful | My New Hugo Site</title>
+
+  <meta charset="UTF-8">
+  <meta name="language" content="en">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  
+  
+
+  <link rel="shortcut icon" type="image/png" href="/favicon.ico" />
+
+
+  
+  
+    
+ 
+  
+  
+  
+  
+  
+  
+    
+    <link type="text/css" rel="stylesheet" href="/css/post.min.b60e0932fe1c50c3d7c5b4f83ee9e4592363654d0f2abf05bbd0678d5b8a214c.css" integrity="sha256-tg4JMv4cUMPXxbT4PunkWSNjZU0PKr8Fu9BnjVuKIUw="/>
+  
+    
+    <link type="text/css" rel="stylesheet" href="/css/custom.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css" integrity="sha256-47DEQpj8HBSa&#43;/TImW&#43;5JCeuQeRkm5NMpJWZG3hSuFU="/>
+  
+  
+   
+   
+    
+
+<script type="application/ld+json">
+  
+    { 
+      "@context": "http://schema.org", 
+      "@type": "WebSite", 
+      "url": "http:\/\/example.org\/posts\/inject-mocks-considered-harmful\/",
+      "name": "@InjectMocks Considered Harmful",
+      "author": {
+        "@type": "Person",
+        "name": ""
+      },
+      "description": ""
+    }
+  
+  </script>
+</head>
+
+<body>
+  <div class="burger__container">
+  <div class="burger" aria-controls="navigation" aria-label="Menu">
+    <div class="burger__meat burger__meat--1"></div>
+    <div class="burger__meat burger__meat--2"></div>
+    <div class="burger__meat burger__meat--3"></div>
+  </div>
+</div>
+ 
+
+  <nav class="nav" id="navigation">
+  <ul class="nav__list">
+    
+    
+  </ul>
+</nav>
+
+
+  <main>
+    
+    
+
+    <div class="flex-wrapper">
+      <div class="post__container">
+        <div class="post">
+          <header class="post__header">
+            <h1 id="post__title">@InjectMocks Considered Harmful</h1>
+            <time datetime="2020-11-23 00:00:00 &#43;0000 UTC" class="post__date">Nov 23 2020</time> 
+          </header>
+          <article class="post__content">
+              
+<h2 id="initialize-fully-or-not-at-all">Initialize fully or not at all<a class="anchor" href="#initialize-fully-or-not-at-all">#</a></h2>
+<p><code>@InjectMocks</code> is eagerly chosen solution to scrap boilerplate in Java&rsquo;s unit tests. The problem with this solution is that, even though it is superficially convenient, it prevents from detecting certain type of bugs at compile time.</p>
+<p>Given a unit test using <code>@InjectMocks</code> to automatically inject <code>fileSupplier</code> to <code>fileClassifier</code>:</p>
+<pre><code class="language-java">@RunWith(MockitoJUnitRunner.class)
+public class InjectMocksTest {
+    @Mock
+    Supplier&lt;File&gt; fileSupplier;
+    @InjectMocks
+    private FileClassifier fileClassifier;
+
+    @Test
+    public void testCase() {
+        // [...]
+    }
+
+    static class FileClassifier {
+        private final Supplier&lt;File&gt; fileSupplier;
+
+        FileClassifier(Supplier&lt;File&gt; fileSupplier) {
+            this.fileSupplier = fileSupplier;
+        }
+        
+        public void doSomething() {
+            // [...]
+        }   
+    }
+}
+</code></pre>
+<p>Furthermore, Mockito&rsquo;s documentation says:</p>
+<blockquote>
+<p>Note: If [constructor&rsquo;s] arguments can not be found, then null is passed.</p>
+</blockquote>
+<p>Now, consider a logger has been added to <code>FileClassifier</code>:</p>
+<pre><code class="language-java">static class FileClassifier {
+    private final Supplier&lt;File&gt; fileSupplier;
+    private final Logger logger;
+
+    FileClassifier(Supplier&lt;File&gt; fileSupplier, Logger logger) {
+        this.fileSupplier = fileSupplier;
+        this.logger = logger;
+    }
+    
+    public void doSomething() {
+        logger.info(&quot;doSomething&quot;);
+        // [...]
+    }   
+}
+</code></pre>
+<p>In consequence, <code>InjectMocksTest</code> compiles. Mockito still injects <code>fileSupplier</code> mock but, as documentation states, Mockito passes <code>null</code> to <code>logger</code> parameter. The hidden threat is that all existing test cases may start to fail at runtime throwing <code>NullPointerException</code>, the root cause here is that <code>@InjectMocks</code> leads to only <em>partially</em> (incorrectly) initialized <code>FileClassifer</code>. Such the situation may even work well at the beginning and wait to explode like a ticking bomb. In the future some other developer may make further changes which would trigger the bomb and that could lead to explosion of small changes required in the code in various test cases, often, not directly related to changes made by this unfortunate fellow.</p>
+
+
+              
+          </article>
+          
+
+ <div class="pagination">
+  
+    <a class="pagination__item" href="http://example.org/posts/use-constructor-injection/">
+        <span class="pagination__label">Previous Post</span>
+        <span class="pagination__title">Prefer Constructor Injection</span>
+    </a>
+  
+
+  
+</div>
+
+          
+          <footer class="post__footer">
+            
+
+
+<div class="social-icons">
+  
+     
+    
+  
+     
+    
+  
+     
+    
+  
+     
+    
+  
+     
+    
+  
+     
+    
+  
+     
+    
+  
+     
+    
+     
+</div>
+
+            <p></p>
+          </footer>
+          </div>
+      </div>
+      
+    </div>
+    
+
+  </main>
+
+   
+
+  
+  <script src="/js/index.min.49e4d8a384357d9b445b87371863419937ede9fa77737522ffb633073aebfa44.js" integrity="sha256-SeTYo4Q1fZtEW4c3GGNBmTft6fp3c3Ui/7YzBzrr&#43;kQ=" crossorigin="anonymous"></script>
+  
+  
+  <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.min.js"></script>
+
+  
+  <script src="https://unpkg.com/prismjs@1.20.0/plugins/autoloader/prism-autoloader.min.js"
+    data-autoloader-path="https://unpkg.com/prismjs@1.20.0/components/"></script>
+
+  
+
+
+</body>
+
+</html>
