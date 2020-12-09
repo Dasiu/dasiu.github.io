@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>My New Hugo Site</title>
-    <link>http://example.org/</link>
-    <description>Recent content on My New Hugo Site</description>
+    <title>abutkiewicz</title>
+    <link>https://dasiu.github.io/</link>
+    <description>Recent content on abutkiewicz</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 23 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 23 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://dasiu.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>@InjectMocks Considered Harmful</title>
-      <link>http://example.org/posts/inject-mocks-considered-harmful/</link>
+      <link>https://dasiu.github.io/posts/inject-mocks-considered-harmful/</link>
       <pubDate>Mon, 23 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/posts/inject-mocks-considered-harmful/</guid>
+      <guid>https://dasiu.github.io/posts/inject-mocks-considered-harmful/</guid>
       <description>Initialize fully or not at all @InjectMocks is eagerly chosen solution to scrap boilerplate in Java&amp;rsquo;s unit tests. The problem with this solution is that, even though it is superficially convenient, it prevents from detecting certain type of bugs at compile time.
 Given a unit test using @InjectMocks to automatically inject fileSupplier to fileClassifier:
 @RunWith(MockitoJUnitRunner.class)public class InjectMocksTest {@MockSupplier&amp;lt;File&amp;gt; fileSupplier;@InjectMocksprivate FileClassifier fileClassifier;@Testpublic void testCase() {// [.</description>
