@@ -18,15 +18,5 @@ Given a unit test using @InjectMocks to automatically inject fileSupplier to fil
 @RunWith(MockitoJUnitRunner.class)public class InjectMocksTest {@MockSupplier&amp;lt;File&amp;gt; fileSupplier;@InjectMocksprivate FileClassifier fileClassifier;@Testpublic void testCase() {// [.</description>
     </item>
     
-    <item>
-      <title>Prefer Constructor Injection</title>
-      <link>http://example.org/posts/use-constructor-injection/</link>
-      <pubDate>Sat, 21 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>http://example.org/posts/use-constructor-injection/</guid>
-      <description>I observed that in Spring ecosystem field or setter injection are practices still in use. In this post I want to present approach which I argue is safer and should be the default choice for software developers.
-Mutability Mess / Dangerous Mutability / Mutability unleashed / Mutability on (the?) loose The first concern stems from the fact that both Field and Setter injections imply that a given class is mutable, the class&#39; dependencies may change, which is rarely desirable and can be seen as a loophole for bugs, especially during parallel execution.</description>
-    </item>
-    
   </channel>
 </rss>
