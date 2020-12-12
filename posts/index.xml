@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on abutkiewicz</title>
+    <title>Posts on adamb</title>
     <link>https://dasiu.github.io/posts/</link>
-    <description>Recent content in Posts on abutkiewicz</description>
+    <description>Recent content in Posts on adamb</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 23 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://dasiu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 12 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://dasiu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Pin down data breach with email aliases</title>
+      <link>https://dasiu.github.io/posts/pin-down-data-breach-with-email-aliases/</link>
+      <pubDate>Sat, 12 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://dasiu.github.io/posts/pin-down-data-breach-with-email-aliases/</guid>
+      <description>A long time ago I stumbled upon interesting gmail feature - trivial way to create email aliases by using &amp;ldquo;+&amp;rdquo; character support.google.com/a/users/answer/9308648 . Since then, every time I needed to sign in somewhere, I used account-specific email address. For example my.email+imdb@example.com.
+Years passed and I didn&amp;rsquo;t notice any outcome of this approach. I even started questioning value of this practice. But just recently I observed something unusual. Higher number of spam emails.</description>
+    </item>
+    
     <item>
       <title>@InjectMocks Considered Harmful</title>
       <link>https://dasiu.github.io/posts/inject-mocks-considered-harmful/</link>
